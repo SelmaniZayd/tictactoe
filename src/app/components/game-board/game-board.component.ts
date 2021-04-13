@@ -311,10 +311,6 @@ export class GameBoardComponent implements OnInit {
               return best;
             }
 
-            if (best > alpha) {
-              alpha = best;
-            }
-
           }
         }
       }
@@ -340,10 +336,6 @@ export class GameBoardComponent implements OnInit {
             // Prunning
             if (best <= alpha) {
               return best;
-            }
-
-            if (best < beta) {
-              beta = best;
             }
           }
         }
