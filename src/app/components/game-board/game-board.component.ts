@@ -39,7 +39,7 @@ export class GameBoardComponent implements OnInit {
           await this.delay(100);
         }
 
-        // First IA Move are pre-defined if matrix > 3 for some optimization :) <3
+        // First IA Move is pre-defined if matrix > 3 for some optimization :) <3
         if(this.moveNumber == 0 && this.matrixSize > 3) {
           this.playMove(0,0);
         } else if(this.moveNumber == 1 && this.matrixSize > 3) {
@@ -367,7 +367,7 @@ export class GameBoardComponent implements OnInit {
     return bestMove;
   }
 
-  // OLD MINIMAX 
+  // OLD MINIMAX !! Not used in current gameplay
   private minimax(b: any[][], depth: number, isMax: boolean): number {
 
     let score = this.evaluate(b);
