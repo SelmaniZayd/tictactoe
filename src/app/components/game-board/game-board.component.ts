@@ -105,14 +105,14 @@ export class GameBoardComponent implements OnInit {
         if (someArray[index] == someArray[index + 1]) {
           counts[value] = (counts[value] | 0) + 1;
         } else {
-          if (index != someArray.length -1 && someArray[index+1] && !(counts[value] == this.winConditions[this.matrixSize] - 1)) {
+          if (index != someArray.length - 1 && someArray[index + 1] && !(counts[value] == this.winConditions[this.matrixSize] - 1)) {
             counts[value] = 0;
           }
         }
       });
-      counts['undefined'] = 0;      
+      counts['undefined'] = 0;
       if (Object.values(counts).includes(this.winConditions[this.matrixSize] - 1)) {
-        let ss = Object.keys(counts).find((value, index) => counts[value] == this.winConditions[this.matrixSize] - 1);            
+        let ss = Object.keys(counts).find((value, index) => counts[value] == this.winConditions[this.matrixSize] - 1);
         return ss;
       }
     }
@@ -228,15 +228,18 @@ export class GameBoardComponent implements OnInit {
       this.moveNumber++;
       played = true;
     }
-    // If someone has won lock the game and declare a winner !
-    if (this.checkWinConditions(this.board) && played) {
-      this.lockGame = true;
-      this.winner = this.checkWinConditions(this.board);
+    if (this.moveNumber >= (this.winConditions[this.matrixSize] * 2 - 1)) {
+      // If someone has won lock the game and declare a winner !
+      if (this.checkWinConditions(this.board) && played) {
+        this.lockGame = true;
+        this.winner = this.checkWinConditions(this.board);
+      }
+      // If there is no more moves Lock the game
+      else if (played && !this.isMovesLeft(this.board)) {
+        this.lockGame = true;
+      }
     }
-    // If there is no more moves Lock the game
-    else if (played && !this.isMovesLeft(this.board)) {
-      this.lockGame = true;
-    }
+
     // If game not ended switch player
     if (!this.lockGame && played) {
       if (this.playerEvent.getValue() == "O") {
