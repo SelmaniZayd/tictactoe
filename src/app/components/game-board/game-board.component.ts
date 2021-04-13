@@ -176,7 +176,7 @@ export class GameBoardComponent implements OnInit {
     let theSquareOftheAngels: number = (this.matrixSize == 3 ? 4 : this.matrixSize);
     for (let index = 0; index < theSquareOftheAngels - 3; index++) {
       for (let i = index; i < theSquareOftheAngels - 3; i++) {
-        for (let j = this.matrixSize - index - 1; j > theSquareOftheAngels - 3; j--) {
+        for (let j = this.matrixSize - index - 1; j > (this.winConditions[this.matrixSize] - 2); j--) {
           let diagonalLefttArray: string[] = [];
           for (let n = 0; n < this.winConditions[this.matrixSize]; n++) {
             diagonalLefttArray.push(board[i + n][j - n]);
