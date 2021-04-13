@@ -15,7 +15,7 @@ class Move {
 })
 export class GameBoardComponent implements OnInit {
 
-  matrixSize: number = 7;
+  matrixSize: number = 3;
   board: string[][] = [];
   winConditions: any = { 3: 3, 5: 4, 7: 4 };
   lockGame = false;
