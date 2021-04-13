@@ -15,13 +15,14 @@ class Move {
 })
 export class GameBoardComponent implements OnInit {
 
-  matrixSize: number = 3;
+  matrixSize: number = 7;
   board: string[][] = [];
   winConditions: any = { 3: 3, 5: 4, 7: 4 };
   lockGame = false;
   winner: string | null = "";
   playerEvent: BehaviorSubject<string> = new BehaviorSubject<string>("O");
   moveNumber: number = 0;
+  IaON: string = "OFF";
 
   constructor() {
   }
@@ -30,30 +31,30 @@ export class GameBoardComponent implements OnInit {
     this.constructBoard();
     // If player Is IA
     this.playerEvent.subscribe(async pl => {
-      if (pl == "X") {
+      if (pl == "X" && this.IaON == "ON") {
         console.log("tour IA");
         // If matrix is 3 add a little delay for user experience
-        if(this.matrixSize == 3){
+        if (this.matrixSize == 3) {
           await this.delay(500);
         } else {
           await this.delay(100);
         }
 
         // First IA Move is pre-defined if matrix > 3 for some optimization :) <3
-        if(this.moveNumber == 0 && this.matrixSize > 3) {
-          this.playMove(0,0);
-        } else if(this.moveNumber == 1 && this.matrixSize > 3) {
+        if (this.moveNumber == 0 && this.matrixSize > 3) {
+          this.playMove(0, 0);
+        } else if (this.moveNumber == 1 && this.matrixSize > 3) {
           if (!this.board[0][0]) {
-            this.playMove(0,0);
+            this.playMove(0, 0);
           } else {
-            this.playMove(1,1);
+            this.playMove(1, 1);
           }
         } else {
           console.time();
           let bestMove = this.findBestMove(this.board);
           console.timeEnd();
           this.playMove(bestMove.row, bestMove.col);
-        } 
+        }
       }
     });
 
@@ -93,9 +94,9 @@ export class GameBoardComponent implements OnInit {
     return false;
   }
 
-  // Takes a List of length = 3 or 4 (number of consecutive squares to win) and returns Player if condtion is checked else false 
+  // Takes a List and returns Player if condtion is checked else false 
   // the condition : x(3 or 4 depending on matrixSize) consecutives same squares
-  private checkCountsCondition(someArray: string[]) {
+  private checkCountsCondition(someArray: any[]) {
     let counts: any = {};
 
     if (!this.hasEmptyvalue(someArray) || someArray.length > 3) {
@@ -103,14 +104,16 @@ export class GameBoardComponent implements OnInit {
       someArray.forEach((value, index) => {
         if (someArray[index] == someArray[index + 1]) {
           counts[value] = (counts[value] | 0) + 1;
+        } else {
+          if (index != someArray.length -1 && someArray[index+1] && !(counts[value] == this.winConditions[this.matrixSize] - 1)) {
+            counts[value] = 0;
+          }
         }
       });
-
-      if (
-        Object.values(counts).includes(this.winConditions[this.matrixSize] - 1) &&
-        counts['undefined'] != this.winConditions[this.matrixSize] - 1
-      ) {
-        return Object.keys(counts).find((value, index) => counts[value] == this.winConditions[this.matrixSize] - 1);
+      counts['undefined'] = 0;      
+      if (Object.values(counts).includes(this.winConditions[this.matrixSize] - 1)) {
+        let ss = Object.keys(counts).find((value, index) => counts[value] == this.winConditions[this.matrixSize] - 1);            
+        return ss;
       }
     }
     return false;
@@ -136,7 +139,6 @@ export class GameBoardComponent implements OnInit {
       for (let i = 0; i < this.matrixSize; i++) {
         verticalArray.push(board[i][index]);
       }
-
       let cc = this.checkCountsCondition(verticalArray);
       if (cc) {
         return cc;
@@ -220,21 +222,23 @@ export class GameBoardComponent implements OnInit {
   // Play a move, Checks if anyone has won and if the game ended, if so locks the game and no more moves are allowed
   async playMove(row: number, col: number) {
     // If the game still ongoing and the move is valid fill the square with the player's letter ("X"or "O")
+    let played = false;
     if (!this.board[row][col] && !this.lockGame) {
       this.board[row][col] = this.playerEvent.getValue();
-      this.moveNumber ++;
+      this.moveNumber++;
+      played = true;
     }
     // If someone has won lock the game and declare a winner !
-    if (this.checkWinConditions(this.board)) {
+    if (this.checkWinConditions(this.board) && played) {
       this.lockGame = true;
       this.winner = this.checkWinConditions(this.board);
     }
     // If there is no more moves Lock the game
-    else if (!this.isMovesLeft(this.board)) {
+    else if (played && !this.isMovesLeft(this.board)) {
       this.lockGame = true;
     }
     // If game not ended switch player
-    if (!this.lockGame) {
+    if (!this.lockGame && played) {
       if (this.playerEvent.getValue() == "O") {
         this.playerEvent.next("X");
       } else {
@@ -274,6 +278,11 @@ export class GameBoardComponent implements OnInit {
 
     // Limitting the depth to 6 so it doesn't freeze on 5x5 7x7 matrixes
     if (depth == 6) {
+      return 0;
+    }
+
+    // If matrix = 7 limit depth to 2 for performance cost
+    if (this.matrixSize == 7 && depth == 4) {
       return 0;
     }
 
@@ -445,6 +454,12 @@ export class GameBoardComponent implements OnInit {
     this.matrixSize = parseInt(size);
     this.resetGame();
     this.lockGame = false;
+  }
+
+  // IA ON OFF
+  setIaOnOff(label: string) {
+    this.IaON = label;
+    this.resetGame();
   }
 
 

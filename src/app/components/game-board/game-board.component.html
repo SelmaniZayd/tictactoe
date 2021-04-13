@@ -1,15 +1,26 @@
 <div class="container">
-    <h1 [ngStyle]="{'color': playerEvent.value == 'X' ? 'red': 'green'}" >Player : {{playerEvent.value == 'X' ? "X (IA)" : "O (Moi)"}}</h1>
+    <h1 [ngStyle]="{'color': playerEvent.value == 'X' ? 'red': 'green'}">Player : {{playerEvent.value == 'X' ? "X (IA)"
+        : "O (Moi)"}}</h1>
 
-    <select name="test" id="tt" #matrixSizeInput (change)="setMatrixSize(matrixSizeInput.value)">
-        <option value="3">3</option>
-        <option value="5">5</option>
-        <option value="7">7</option>
-    </select>
+    <div class="select-container">
+        <label for="tt">Size&nbsp;</label>
+        <select name="test" id="tt" #matrixSizeInput [value]="matrixSize" (change)="setMatrixSize(matrixSizeInput.value)">
+            <option value="3">3</option>
+            <option value="5">5</option>
+            <option value="7">7</option>
+        </select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <label for="tet">IA&nbsp;</label>
+        <select name="ia" id="tet" #matrixSizeInput [value]="IaON" #ia (change)="setIaOnOff(ia.value)">
+            <option value="ON">On</option>
+            <option value="OFF">Off</option>
+        </select>
+    </div>
 
     <table>
         <tr *ngFor="let row of board; let rowIndex = index">
-            <td *ngFor="let column of row; let columnIndex = index" (click)="playMove(rowIndex, columnIndex)">{{column}}</td>
+            <td *ngFor="let column of row; let columnIndex = index" (click)="playMove(rowIndex, columnIndex)">{{column}}
+            </td>
         </tr>
     </table>
     <br>
